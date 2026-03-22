@@ -431,7 +431,7 @@ if "Home" in page:
         fig.update_xaxes(tickmode="array",
                  tickvals=avg_plat["platform"].tolist(),
                  ticktext=avg_plat["platform"].tolist())
-        st.plotly_chart(fig, width="stretch")
+        st.plotly_chart(fig, use_container_width=True)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PREDICT PAGE
@@ -496,7 +496,7 @@ elif "Predict" in page:
             "acknowledged in the project evaluation."
         )
         st.markdown("<br>", unsafe_allow_html=True)
-        submitted = st.form_submit_button("Run Prediction", width="stretch")
+        submitted = st.form_submit_button("Run Prediction", use_container_width=True)
 
     # Results
     if submitted:
@@ -654,7 +654,7 @@ elif "Predict" in page:
         )
         g1, g2, g3 = st.columns([1,2,1])
         with g2:
-            st.plotly_chart(fig_gauge, width="stretch")
+            st.plotly_chart(fig_gauge, use_container_width=True)
 
         st.markdown(f"""
         <div style='text-align:center; color:#7c7c99; font-size:13px; margin-top:-10px;'>
@@ -738,7 +738,7 @@ elif "Predict" in page:
                 xaxis=dict(gridcolor="#2e2e3a", dtick=1),
                 yaxis=dict(gridcolor="#2e2e3a"),
             )
-            st.plotly_chart(fig3, width="stretch")
+            st.plotly_chart(fig3, use_container_width=True)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ANALYTICS PAGE
@@ -771,11 +771,12 @@ elif "Analytics" in page:
             avg_plat.columns = ["Platform","Mean","Std","Count"]
             fig = px.bar(avg_plat, x="Platform", y="Mean", error_y="Std",
                          color="Platform",
+                         barmode="group",
                          color_discrete_sequence=px.colors.qualitative.Vivid)
             fig.update_layout(**PLOTLY_LAYOUT, showlegend=False)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
             st.dataframe(avg_plat.sort_values("Mean", ascending=False),
-                         width="stretch")
+                         use_container_width=True)
 
     with tab2:
         st.subheader("Top Hashtags by Viral Rate (Model-Compatible)")
@@ -793,12 +794,13 @@ elif "Analytics" in page:
             top_ht = vr_filtered.sort_values("viral_rate", ascending=False).head(top_n)
             fig = px.bar(top_ht, x="primary_hashtag", y="viral_rate",
                          color="platform",
+                         barmode="group",
                          color_discrete_sequence=px.colors.qualitative.Vivid,
                          labels={"primary_hashtag":"Hashtag","viral_rate":"Viral Rate"})
             fig.update_xaxes(tickangle=45)
             fig.update_layout(**PLOTLY_LAYOUT)
-            st.plotly_chart(fig, width="stretch")
-            st.dataframe(top_ht, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
+            st.dataframe(top_ht, use_container_width=True)
         else:
             st.info("Viral rates data not available.")
 
@@ -815,7 +817,7 @@ elif "Analytics" in page:
                           labels={"engagement_rate":"Avg Engagement Rate","month":"Month"})
             fig.update_xaxes(tickangle=45)
             fig.update_layout(**PLOTLY_LAYOUT)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
     with tab4:
         st.subheader("Top 20 Feature Importances — XGBoost Tuned")
@@ -826,7 +828,7 @@ elif "Analytics" in page:
                          color_continuous_scale="Viridis",
                          labels={"importance":"Importance Score","feature":"Feature"})
             fig.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("Feature importance data not available.")
 
