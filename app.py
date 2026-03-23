@@ -812,7 +812,12 @@ elif "Analytics" in page:
             else:
                 st.caption(f"Showing {len(vr_filtered)} model-compatible hashtags "
                            f"(of {len(viral_rates_df)} total).")
-            top_ht = vr_filtered.sort_values("viral_rate", ascending=False).head(top_n)
+            # Deduplicate: keep only the highest viral_rate row per hashtag
+            # (prevents Plotly stacking multiple platform rows for the same hashtag)
+            top_ht = (vr_filtered
+                      .sort_values("viral_rate", ascending=False)
+                      .drop_duplicates(subset="primary_hashtag")
+                      .head(top_n))
             fig = px.bar(top_ht, x="primary_hashtag", y="viral_rate",
                          color="platform",
                          color_discrete_sequence=px.colors.qualitative.Vivid,
