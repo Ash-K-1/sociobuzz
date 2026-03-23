@@ -17,6 +17,25 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 warnings.filterwarnings("ignore")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# sklearn version compatibility patch
+# The .joblib artifacts were saved with sklearn 1.6.1 which
+# introduced _RemainderColsList. This shim makes older sklearn
+# versions able to load those files without error.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+try:
+    from sklearn.compose._column_transformer import _RemainderColsList  # noqa: F401
+except ImportError:
+    import sklearn.compose._column_transformer as _ct
+
+    class _RemainderColsList(list):
+        """Compatibility shim for sklearn < 1.2 loading artifacts from >= 1.2."""
+        def __init__(self, columns=None, future_dtype=None):
+            super().__init__(columns or [])
+            self.future_dtype = future_dtype
+
+    _ct._RemainderColsList = _RemainderColsList
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PAGE CONFIG
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 st.set_page_config(
@@ -771,7 +790,6 @@ elif "Analytics" in page:
             avg_plat.columns = ["Platform","Mean","Std","Count"]
             fig = px.bar(avg_plat, x="Platform", y="Mean", error_y="Std",
                          color="Platform",
-                         barmode="group",
                          color_discrete_sequence=px.colors.qualitative.Vivid)
             fig.update_layout(**PLOTLY_LAYOUT, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
@@ -794,7 +812,6 @@ elif "Analytics" in page:
             top_ht = vr_filtered.sort_values("viral_rate", ascending=False).head(top_n)
             fig = px.bar(top_ht, x="primary_hashtag", y="viral_rate",
                          color="platform",
-                         barmode="group",
                          color_discrete_sequence=px.colors.qualitative.Vivid,
                          labels={"primary_hashtag":"Hashtag","viral_rate":"Viral Rate"})
             fig.update_xaxes(tickangle=45)
