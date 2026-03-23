@@ -444,8 +444,9 @@ if "Home" in page:
             font_color="#c0c0d0", showlegend=False,
             xaxis=dict(gridcolor="#2e2e3a"),
             yaxis=dict(gridcolor="#2e2e3a"),
-            bargap=0.3,
+            bargap=0.5,
             bargroupgap=0.1,
+            height=380,
         )
         fig.update_xaxes(tickmode="array",
                  tickvals=avg_plat["platform"].tolist(),
@@ -756,6 +757,7 @@ elif "Predict" in page:
                 font_color="#c0c0d0",
                 xaxis=dict(gridcolor="#2e2e3a", dtick=1),
                 yaxis=dict(gridcolor="#2e2e3a"),
+                height=380,
             )
             st.plotly_chart(fig3, width="stretch")
 
@@ -780,6 +782,7 @@ elif "Analytics" in page:
         font_color="#c0c0d0",
         xaxis=dict(gridcolor="#2e2e3a"),
         yaxis=dict(gridcolor="#2e2e3a"),
+        height=420,
     )
 
     with tab1:
@@ -791,7 +794,7 @@ elif "Analytics" in page:
             fig = px.bar(avg_plat, x="Platform", y="Mean", error_y="Std",
                          color="Platform",
                          color_discrete_sequence=px.colors.qualitative.Vivid)
-            fig.update_layout(**PLOTLY_LAYOUT, showlegend=False)
+            fig.update_layout(**PLOTLY_LAYOUT, showlegend=False, bargap=0.5)
             st.plotly_chart(fig, width="stretch")
             st.dataframe(avg_plat.sort_values("Mean", ascending=False),
                          width='stretch')
